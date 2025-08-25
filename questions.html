@@ -1,0 +1,125 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMSF Information Hub - Top Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-blue-600 text-white py-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">SMSF Info Hub</h1>
+            <ul class="flex space-x-4">
+                <li><a href="index.html" class="hover:underline">Home</a></li>
+                <li><a href="questions.html" class="hover:underline">Top Questions</a></li>
+                <li><a href="pros-cons.html" class="hover:underline">Advantages & Disadvantages</a></li>
+                <li><a href="hot-cases.html" class="hover:underline">Hot Cases</a></li>
+                <li><a href="calculator.html" class="hover:underline">Wealth Calculator</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container mx-auto py-8">
+        <h2 class="text-3xl font-bold mb-4">Top Questions About SMSF</h2>
+        <section class="mb-8">
+            <h3 class="text-2xl font-semibold mb-2">Who Can Set Up an SMSF?</h3>
+            <ul class="list-disc pl-6">
+                <li><strong>Who is eligible?</strong> Australian residents over 18, not bankrupt, can set up an SMSF. <a href="https://www.ato.gov.au/Individuals/Superannuation/Self-managed-super-funds/Setting-up-an-SMSF/" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Can minors be members?</strong> Minors can be members under legal guardian control. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Max members?</strong> Up to six members, typically family or business partners. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Trustee requirements?</strong> All members must be trustees or directors of a corporate trustee. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Can non-residents join?</strong> Non-residents can join if compliant with ATO rules. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Disqualified persons?</strong> Convicted fraudsters or bankrupts cannot be trustees. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Corporate vs individual trustee?</strong> Corporate trustees offer liability protection, individual trustees are simpler. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Can employees join?</strong> Employees can join if unrelated to employer trustee. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Age limits?</strong> No upper age limit for setting up an SMSF. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Financial knowledge needed?</strong> No formal qualifications, but financial literacy is recommended. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+            </ul>
+        </section>
+        <section class="mb-8">
+            <h3 class="text-2xl font-semibold mb-2">Why Set Up an SMSF?</h3>
+            <ul class="list-disc pl-6">
+                <li><strong>Control?</strong> Offers direct control over investment choices and strategy. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Flexibility?</strong> Allows diverse investments like property, shares, or crypto. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Cost-effective?</strong> Can be cost-effective for balances over $500,000. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Tax benefits?</strong> Offers tax strategies like franking credits, deductions. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Estate planning?</strong> Facilitates tailored succession and pension planning. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Pooling funds?</strong> Combine family funds for larger investments. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Retirement goals?</strong> Aligns investments with personal retirement objectives. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Transparency?</strong> Full visibility of fund performance and fees. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Long-term savings?</strong> Encourages disciplined, long-term wealth building. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Customisation?</strong> Tailor fund to unique financial circumstances. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+            </ul>
+        </section>
+        <section class="mb-8">
+            <h3 class="text-2xl font-semibold mb-2">How to Set Up an SMSF?</h3>
+            <ul class="list-disc pl-6">
+                <li><strong>First step?</strong> Decide if SMSF suits your financial goals, knowledge. <a href="https://www.ato.gov.au/Individuals/Superannuation/Self-managed-super-funds/Setting-up-an-SMSF/" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Trust structure?</strong> Choose individual or corporate trustee structure. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Trust deed?</strong> Draft a compliant trust deed with legal help. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Register with ATO?</strong> Apply for ABN and register with ATO. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Bank account?</strong> Open a dedicated SMSF bank account. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+            </ul>
+        </section>
+        <section>
+            <h3 class="text-2xl font-semibold mb-2">How to Manage an SMSF?</h3>
+            <ul class="list-disc pl-6">
+                <li><strong>Investment strategy?</strong> Develop and regularly review investment strategy. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Record-keeping?</strong> Maintain accurate records for all transactions. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Annual reporting?</strong> Lodge annual return with ATO. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Audits?</strong> Arrange annual independent audit. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Contributions?</strong> Monitor contribution caps to avoid penalties. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Pensions?</strong> Manage pension payments per ATO rules. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Compliance?</strong> Adhere to SIS Act and ATO regulations. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Tax obligations?</strong> Pay taxes on contributions, earnings. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+                <li><strong>Professional help?</strong> Engage accountants or advisers for compliance. <a href="https://www.smsfassociation.com" class="text-blue-600 hover:underline" target="_blank">SMSF Association</a>.</li>
+                <li><strong>Investment monitoring?</strong> Regularly review investment performance. <a href="https://www.ato.gov.au" class="text-blue-600 hover:underline" target="_blank">ATO</a>.</li>
+            </ul>
+        </section>
+    </main>
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 SMSF Info Hub. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
